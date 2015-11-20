@@ -1,0 +1,24 @@
+kerberos:
+  kdc: ${KRB_KDC:kdc}
+  realm: ${KRB_REALM:realm}
+  user: ${KRB_USER:user}
+  password: ${KRB_PASSWORD:password}
+  confFile: /etc/krb5.conf
+
+h2o:
+  driver:
+    ip: ${DRIVER_IP:127.0.0.1}
+    portLowerBound: ${DRIVER_PORT_LOWER:54300}
+    portUpperBound: ${DRIVER_PORT_UPPER:54319}
+    jarPath: ./h2odriver.jar
+  credentials:
+    usernameLength: ${H2O_USERNAME_LENGTH:8}
+    passwordLength: ${H2O_PASSWORD_LENGTH:12}
+
+#do not change name of "HADOOP_CONF_DIR" env variable - hadoop cmd client is also using it
+yarn.conf.dir: ${HADOOP_CONF_DIR:/yarn-conf}
+
+logging:
+  level:
+    water: DEBUG
+    org.trustedanalytics: DEBUG

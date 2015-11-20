@@ -1,0 +1,21 @@
+kerberos:
+  kdc: fakeKdc
+  realm: fakeRealm
+  user: fakeKrbUser
+  password: fakeKrbPassword
+
+h2o:
+  driver:
+    ip: fakeDriverIp
+    portLowerBound: fakePortLower
+    portUpperBound: fakePortUpper
+    jarPath: fakeH2oJarPath
+  credentials:
+    usernameLength: 8
+    passwordLength: 12
+
+yarn.conf.dir: fakeYarnConfDir
+
+
+
+
