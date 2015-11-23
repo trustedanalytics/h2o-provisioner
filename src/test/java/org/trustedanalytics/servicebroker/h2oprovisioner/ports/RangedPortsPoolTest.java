@@ -18,10 +18,17 @@ package org.trustedanalytics.servicebroker.h2oprovisioner.ports;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
+
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.MatcherAssertionErrors.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,7 +68,7 @@ public class RangedPortsPoolTest {
     }
 
     @Test
-    public void getPort_allPortsAvailable_returnsPortsOneAfterAnother() {
+    public void getPort_allPortsAvailable_returnsPortsOneAfterAnother() throws IOException {
         RangedPortsPool portsPool = new RangedPortsPool(allPortsAvailable(), 1, 3);
         assertThat(portsPool.getPort(), equalTo(1));
         assertThat(portsPool.getPort(), equalTo(2));
@@ -79,7 +86,7 @@ public class RangedPortsPoolTest {
     }
 
     @Test
-    public void getPort_oddPortsAvailable_returnsOddPortsOneAfterAnother() {
+    public void getPort_oddPortsAvailable_returnsOddPortsOneAfterAnother() throws IOException {
         RangedPortsPool portsPool = new RangedPortsPool(onlyOddPortsAvailable(), 1, 4);
         assertThat(portsPool.getPort(), equalTo(1));
         assertThat(portsPool.getPort(), equalTo(3));
@@ -91,5 +98,29 @@ public class RangedPortsPoolTest {
 
     private PortChecker onlyOddPortsAvailable() {
         return port -> port % 2 != 0;
+    }
+
+    @Test
+    public void getPort_allPortsUnavailable_checkAllPortsOnlyOnceThenThrowsException() {
+        PortChecker portChecker = allPortsUnavailable();
+        RangedPortsPool portsPool = new RangedPortsPool(portChecker, 1, 4);
+
+        try {
+            portsPool.getPort();
+        } catch (IOException e) {
+            assertThat(e.getMessage(), equalTo("No port in the pool is available."));
+        }
+
+        InOrder inOrder = inOrder(portChecker);
+        inOrder.verify(portChecker).isAvailable(1);
+        inOrder.verify(portChecker).isAvailable(2);
+        inOrder.verify(portChecker).isAvailable(3);
+        inOrder.verify(portChecker).isAvailable(4);
+    }
+
+    private PortChecker allPortsUnavailable() {
+        PortChecker portChecker = mock(PortChecker.class);
+        when(portChecker.isAvailable(anyInt())).thenReturn(false);
+        return portChecker;
     }
 }

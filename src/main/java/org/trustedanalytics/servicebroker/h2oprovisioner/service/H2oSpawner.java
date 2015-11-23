@@ -28,6 +28,7 @@ import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oDr
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oUiFileParser;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.KinitExec;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -62,11 +63,12 @@ public class H2oSpawner {
         LOGGER.info("Trying to provision h2o for: " + serviceInstanceId);
         String user = usernameSupplier.get();
         String password = passwordSupplier.get();
-        String[] command =
-            getH2oDriverCommand(serviceInstanceId, user, password, memory, nodesCount);
-        LOGGER.info("with such command: " + Arrays.toString(command));
 
         try {
+            String[] command =
+                getH2oDriverCommand(serviceInstanceId, user, password, memory, nodesCount);
+            LOGGER.info("with such command: " + Arrays.toString(command));
+
             kinit.loginToKerberos();
 
             Configuration hadoopConf = new Configuration(false);
@@ -84,7 +86,7 @@ public class H2oSpawner {
     }
 
     private String[] getH2oDriverCommand(String serviceInstanceId, String user, String password,
-        String memory, String nodesCount) {
+        String memory, String nodesCount) throws IOException {
 
         return new String[] {
             "hadoop",

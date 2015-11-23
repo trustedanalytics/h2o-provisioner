@@ -16,21 +16,29 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.helpers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class ExternalProcessExecutor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalProcessExecutor.class);
 
     private ExternalProcessExecutor() {
     }
 
     public static int runCommand(String[] command) throws IOException {
-        System.out.println("===================");
-        System.out.println("Command to invoke:");
-        Arrays.asList(command).stream().forEach(System.out::println);
-        System.out.println("===================");
+        String lineToRun = Arrays.asList(command).stream().collect(Collectors.joining(" "));
+
+        LOGGER.info("===================");
+        LOGGER.info("Command to invoke:");
+        LOGGER.info(lineToRun);
+        LOGGER.info("===================");
 
         Process pr = Runtime.getRuntime().exec(command);
         BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
@@ -42,13 +50,13 @@ public class ExternalProcessExecutor {
         try {
             pr.waitFor();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.info("Command '" + lineToRun + "' interrupted.", e);
         }
 
         int exitCode = pr.exitValue();
-        System.out.println("===================");
-        System.out.println("Exit value: " + exitCode);
-        System.out.println("===================");
+        LOGGER.info("===================");
+        LOGGER.info("Exit value: " + exitCode);
+        LOGGER.info("===================");
         return exitCode;
     }
 
@@ -65,10 +73,10 @@ public class ExternalProcessExecutor {
             String line;
             try {
                 while ((line = stream.readLine()) != null) {
-                    System.out.println(printPrefix + line);
+                    LOGGER.info(printPrefix + line);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.info(printPrefix + "Error while reading process output.", e);
             }
         };
     }

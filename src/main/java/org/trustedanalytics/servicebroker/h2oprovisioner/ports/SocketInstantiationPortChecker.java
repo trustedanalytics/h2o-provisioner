@@ -37,12 +37,14 @@ public class SocketInstantiationPortChecker implements PortChecker {
         try {
             socket = new ServerSocket(port);
         } catch (IOException e) {
+            LOGGER.debug("Error when creating ServerSocket object.");
             return false;
         }
 
         try {
             socket.close();
         } catch (IOException e) {
+            LOGGER.debug("Error when closing ServerSocket object.");
             return false;
         }
 

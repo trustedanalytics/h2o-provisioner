@@ -61,7 +61,7 @@ public class KinitExec {
     }
 
     public void loginToKerberos() throws Exception {
-        System.out.println("Try to log in kerberos");
+        LOGGER.info("Try to log in kerberos");
         String[] loginCmd = {
             "/bin/sh",
             "-c",
@@ -69,7 +69,7 @@ public class KinitExec {
         };
         int kinitExitCode = ExternalProcessExecutor.runCommand(loginCmd);
         if (kinitExitCode != 0) {
-            throw new Exception("kinit exited with code " + kinitExitCode);
+            throw new ExternalProcessException("kinit exited with code " + kinitExitCode);
         }
     }
 }

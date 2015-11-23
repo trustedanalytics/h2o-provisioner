@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package org.trustedanalytics.servicebroker.h2oprovisioner.ports;
+package org.trustedanalytics.servicebroker.h2oprovisioner.service.externals;
 
-import java.io.IOException;
+public class ExternalProcessException extends Exception {
 
-public interface PortsPool {
-    int getPort() throws IOException;
+    private static final long serialVersionUID = 1L;
+
+    public ExternalProcessException(String message) {
+        super(message);
+    }
+
+    public ExternalProcessException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

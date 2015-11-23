@@ -82,7 +82,7 @@ public class H2oSpawnerTest {
     public H2oUiFileParser h2oUiFileParser;
 
     @Before
-    public void setup() {
+    public void setup() throws IOException {
         ExternalConfiguration config = new ExternalConfiguration();
         config.setH2oDriverJarpath(DRIVER_JAR_PATH);
         config.setH2oDriverIp(DRIVER_IP);

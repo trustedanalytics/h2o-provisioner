@@ -37,7 +37,7 @@ public class H2oDriverExec {
 
         int h2oExitCode = ExternalProcessExecutor.runCommand(command);
         if (h2oExitCode != 0) {
-            throw new Exception("h2odriver.jar exited with code " + h2oExitCode);
+            throw new ExternalProcessException("h2odriver.jar exited with code " + h2oExitCode);
         }
     }
 }

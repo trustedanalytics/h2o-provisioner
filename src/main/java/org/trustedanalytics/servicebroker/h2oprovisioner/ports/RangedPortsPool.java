@@ -18,6 +18,7 @@ package org.trustedanalytics.servicebroker.h2oprovisioner.ports;
 
 import com.google.common.base.Preconditions;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -45,21 +46,23 @@ public class RangedPortsPool implements PortsPool {
     }
 
     private Queue<Integer> initializePool(int lowerBound, int upperBound) {
-        LinkedList<Integer> ports = new LinkedList<>();
+        Queue<Integer> portsPool = new LinkedList<>();
         for (int i = lowerBound; i <= upperBound; ++i) {
-            ports.add(i);
+            portsPool.add(i);
         }
-        return ports;
+        return portsPool;
     }
 
     @Override
-    public synchronized int getPort() {
-        while (true) {
-            int port = popPortAndEnqueueAgain();
+    public synchronized int getPort() throws IOException {
+        int firstPort = popPortAndEnqueueAgain();
+        int port = firstPort;
+        do {
             if (portChecker.isAvailable(port)) {
                 return port;
             }
-        }
+        } while ((port = popPortAndEnqueueAgain()) != firstPort);
+        throw new IOException("No port in the pool is available.");
     }
 
     private int popPortAndEnqueueAgain() {

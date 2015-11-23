@@ -32,7 +32,8 @@ public class H2oUiFileParser {
         return getFlowUrl(new BufferedReader(new FileReader(h2oUiFilePath)));
     }
 
-    @VisibleForTesting String getFlowUrl(BufferedReader h2oUiFile) throws IOException {
+    @VisibleForTesting
+    String getFlowUrl(BufferedReader h2oUiFile) throws IOException {
         LOGGER.info("Try to read UI file.");
 
         String line = h2oUiFile.readLine();
