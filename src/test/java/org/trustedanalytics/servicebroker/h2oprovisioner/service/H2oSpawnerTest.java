@@ -110,7 +110,7 @@ public class H2oSpawnerTest {
         //arrange
         expectedException.expect(H2oSpawnerException.class);
         expectedException.expectMessage("Unable to provision h2o for: " + INSTANCE_ID);
-        doThrow(new Exception()).when(kinitExec).loginToKerberos();
+        doThrow(new IOException()).when(kinitExec).loginToKerberos();
 
         //act
         h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, YARN_CONF);
@@ -124,7 +124,7 @@ public class H2oSpawnerTest {
         //arrange
         expectedException.expect(H2oSpawnerException.class);
         expectedException.expectMessage("Unable to provision h2o for: " + INSTANCE_ID);
-        doThrow(new Exception()).when(h2oDriverExec)
+        doThrow(new IOException()).when(h2oDriverExec)
             .spawnH2oOnYarn(h2oDriverArgs(), hadoopConf(YARN_CONF));
 
         //act

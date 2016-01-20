@@ -54,13 +54,13 @@ public class KinitExec {
     }
 
     private static void saveKrbConfFile(String krbConfFile, String krbConf) throws IOException {
-        FileWriter fileWriter = new FileWriter(krbConfFile);
-        fileWriter.write(krbConf);
-        fileWriter.flush();
-        fileWriter.close();
+        try (FileWriter fileWriter = new FileWriter(krbConfFile)) {
+            fileWriter.write(krbConf);
+            fileWriter.flush();
+        }
     }
 
-    public void loginToKerberos() throws Exception {
+    public void loginToKerberos() throws ExternalProcessException, IOException {
         LOGGER.info("Try to log in kerberos");
         String[] loginCmd = {
             "/bin/sh",

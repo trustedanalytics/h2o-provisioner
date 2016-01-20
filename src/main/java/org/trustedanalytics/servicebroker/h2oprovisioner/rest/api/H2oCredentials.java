@@ -35,10 +35,10 @@ public class H2oCredentials {
 
     public Map<String, Object> toMap() {
         return ImmutableMap.of(
-            "hostname", hostname,
-            "port", port,
-            "username", username,
-            "password", password
+                "hostname", hostname,
+                "port", port,
+                "username", username,
+                "password", password
         );
     }
 }

@@ -29,7 +29,9 @@ public class H2oUiFileParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(H2oUiFileParser.class);
 
     public String getFlowUrl(String h2oUiFilePath) throws IOException {
-        return getFlowUrl(new BufferedReader(new FileReader(h2oUiFilePath)));
+        try (FileReader reader = new FileReader(h2oUiFilePath)) {
+            return getFlowUrl(new BufferedReader(reader));
+        }
     }
 
     @VisibleForTesting

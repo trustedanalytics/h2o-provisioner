@@ -31,6 +31,7 @@ import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.Kinit
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 public class H2oSpawner {
 
@@ -77,9 +78,11 @@ public class H2oSpawner {
 
             //TODO: what if exception will be thrown by getFlowUrl?
             //should we kill h2o on yarn = undo step: spawnH2oOnYarn?
-            String host = h2oUiFileParser.getFlowUrl(h2oUiPath(serviceInstanceId));
+
+            String host = Objects.requireNonNull(h2oUiFileParser.getFlowUrl(h2oUiPath(serviceInstanceId)));
 
             return new H2oCredentials(getAddress(host), getPort(host), user, password);
+
         } catch (Exception e) {
             throw new H2oSpawnerException(errorMsg(serviceInstanceId), e);
         }

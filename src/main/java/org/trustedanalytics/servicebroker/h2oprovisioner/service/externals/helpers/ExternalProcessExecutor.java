@@ -72,11 +72,17 @@ public class ExternalProcessExecutor {
         return () -> {
             String line;
             try {
-                while ((line = stream.readLine()) != null) {
-                    LOGGER.info(printPrefix + line);
+                try {
+                    while ((line = stream.readLine()) != null) {
+                        LOGGER.info(printPrefix + line);
+                    }
+                } catch (IOException e) {
+                    LOGGER.info(printPrefix + "Error while reading process output.", e);
+                } finally {
+                    stream.close();
                 }
             } catch (IOException e) {
-                LOGGER.info(printPrefix + "Error while reading process output.", e);
+                LOGGER.info(printPrefix + "Error while closing process output stream.", e);
             }
         };
     }
