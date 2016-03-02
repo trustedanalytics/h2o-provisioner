@@ -16,17 +16,18 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.service;
 
-import org.apache.hadoop.conf.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.trustedanalytics.servicebroker.h2oprovisioner.config.ExternalConfiguration;
 import org.trustedanalytics.servicebroker.h2oprovisioner.credentials.CredentialsSupplier;
 import org.trustedanalytics.servicebroker.h2oprovisioner.ports.PortsPool;
-import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oCredentials;
 import org.trustedanalytics.servicebroker.h2oprovisioner.rest.H2oSpawnerException;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oCredentials;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oDriverExec;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oUiFileParser;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.KinitExec;
+
+import org.apache.hadoop.conf.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -59,7 +60,7 @@ public class H2oSpawner {
     }
 
     public H2oCredentials provisionInstance(String serviceInstanceId, String memory,
-        String nodesCount, Map<String, String> hadoopConfiguration) throws H2oSpawnerException {
+        String nodesCount, boolean kerberos, Map<String, String> hadoopConfiguration) throws H2oSpawnerException {
 
         LOGGER.info("Trying to provision h2o for: " + serviceInstanceId);
         String user = usernameSupplier.get();
@@ -70,7 +71,9 @@ public class H2oSpawner {
                 getH2oDriverCommand(serviceInstanceId, user, password, memory, nodesCount);
             LOGGER.info("with such command: " + Arrays.toString(command));
 
-            kinit.loginToKerberos();
+            if(kerberos) {
+              kinit.loginToKerberos();
+            }
 
             Configuration hadoopConf = new Configuration(false);
             hadoopConfiguration.forEach(hadoopConf::set);

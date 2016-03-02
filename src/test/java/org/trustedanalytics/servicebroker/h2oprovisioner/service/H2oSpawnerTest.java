@@ -45,6 +45,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -113,7 +114,7 @@ public class H2oSpawnerTest {
         doThrow(new IOException()).when(kinitExec).loginToKerberos();
 
         //act
-        h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, YARN_CONF);
+        h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, true, YARN_CONF);
 
         //assert
         verifyKinitCalled();
@@ -128,7 +129,7 @@ public class H2oSpawnerTest {
             .spawnH2oOnYarn(h2oDriverArgs(), hadoopConf(YARN_CONF));
 
         //act
-        h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, YARN_CONF);
+        h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, true, YARN_CONF);
 
         //assert
         verifyKinitCalled();
@@ -146,7 +147,7 @@ public class H2oSpawnerTest {
             .getFlowUrl("h2o_ui_" + INSTANCE_ID);
 
         //act
-        h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, YARN_CONF);
+        h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, true, YARN_CONF);
 
         //assert
         verifyKinitCalled();
@@ -163,7 +164,7 @@ public class H2oSpawnerTest {
 
         //act
         H2oCredentials actualH2oCredentials =
-            h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, YARN_CONF);
+            h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, true, YARN_CONF);
 
         //assert
         assertThat(actualH2oCredentials.getHostname(), equalTo("127.0.0.1"));
@@ -175,9 +176,34 @@ public class H2oSpawnerTest {
         verifyUiFileParserCalled();
     }
 
+    @Test
+    public void provisionInstanceKrbFalse_everythingWorks_allExternalsWithoutKinitCalledH2oUrlReturned()
+        throws Exception {
+
+        //arrange
+        when(h2oUiFileParser.getFlowUrl("h2o_ui_" + INSTANCE_ID)).thenReturn("127.0.0.1:54321");
+
+        //act
+        H2oCredentials actualH2oCredentials =
+            h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, false, YARN_CONF);
+
+        //assert
+        assertThat(actualH2oCredentials.getHostname(), equalTo("127.0.0.1"));
+        assertThat(actualH2oCredentials.getPort(), equalTo("54321"));
+        assertThat(actualH2oCredentials.getUsername(), equalTo(H2O_USER));
+        assertThat(actualH2oCredentials.getPassword(), equalTo(H2O_PASSWORD));
+        verifyKinitNotCalled();
+        verifyDriverCalled();
+        verifyUiFileParserCalled();
+    }
+
     private void verifyKinitCalled() throws Exception {
         verify(kinitExec, times(1))
             .loginToKerberos();
+    }
+
+    private void verifyKinitNotCalled() {
+        verifyNoMoreInteractions(kinitExec);
     }
 
     private void verifyDriverCalled() throws Exception {

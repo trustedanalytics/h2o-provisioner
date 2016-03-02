@@ -39,9 +39,10 @@ public class H2oSpawnerRestController {
         @PathVariable String instanceId,
         @RequestParam String nodesCount,
         @RequestParam String memory,
+        @RequestParam(required = false, defaultValue = "on") String kerberos,
         @RequestBody Map<String, String> hadoopConf)
         throws H2oSpawnerException {
 
-        return h2oSpawner.provisionInstance(instanceId, memory, nodesCount, hadoopConf);
+        return h2oSpawner.provisionInstance(instanceId, memory, nodesCount, "on".equals(kerberos), hadoopConf);
     }
 }

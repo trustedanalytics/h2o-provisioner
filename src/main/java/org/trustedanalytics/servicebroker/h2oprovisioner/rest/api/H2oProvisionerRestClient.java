@@ -36,16 +36,15 @@ public class H2oProvisionerRestClient implements H2oProvisionerRestApi {
     }
 
     @Override
-    public String prepareUrl(String serviceInstanceId, String nodesCount, String memory) {
-        return String.format("%s/rest/instances/%s/create?nodesCount=%s&memory=%s",
-            baseUrl, serviceInstanceId, nodesCount, memory);
+    public String prepareUrl(String serviceInstanceId, String nodesCount, String memory, boolean kerberos) {
+        return String.format("%s/rest/instances/%s/create?nodesCount=%s&memory=%s&kerberos=%s",
+        baseUrl, serviceInstanceId, nodesCount, memory, kerberos ? "on" : "off");
     }
 
     @Override
-    public ResponseEntity<H2oCredentials> createH2oInstance(String serviceInstanceId,
-        String nodesCount, String memory, Map<String, String> yarnConf) {
-
-        String url = prepareUrl(serviceInstanceId, nodesCount, memory);
+    public ResponseEntity<H2oCredentials> createH2oInstance(String serviceInstanceId, String nodesCount, String memory,
+            boolean kerberos, Map<String, String> yarnConf) {
+        String url = prepareUrl(serviceInstanceId, nodesCount, memory, kerberos);
         LOGGER.info("calling provisioner with url '" + url + "'");
         return rest.postForEntity(url, yarnConf, H2oCredentials.class);
     }

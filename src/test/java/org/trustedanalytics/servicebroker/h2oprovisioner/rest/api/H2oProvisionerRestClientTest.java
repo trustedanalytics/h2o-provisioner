@@ -37,8 +37,10 @@ public class H2oProvisionerRestClientTest {
 
     private static final String BASE_URL = "http://baseUrl.com";
 
-    private static final String EFFECTIVE_URL =
-        "http://baseUrl.com/rest/instances/serviceInstanceId/create?nodesCount=2&memory=512m";
+    private static final String EFFECTIVE_URL_BASE =
+        "http://baseUrl.com/rest/instances/serviceInstanceId/create?nodesCount=2&memory=512m&kerberos=";
+    private static final String EFFECTIVE_URL_KRB_ON = EFFECTIVE_URL_BASE + "on";
+    private static final String EFFECTIVE_URL_KRB_OFF = EFFECTIVE_URL_BASE + "off";
 
     private static final ImmutableMap<String, String> YARN_CONF =
         ImmutableMap.of("key1", "value1", "key2", "value2");
@@ -56,26 +58,32 @@ public class H2oProvisionerRestClientTest {
     }
 
     @Test
-    public void prepareUrl_parametersGiven_urlGenerated() {
-        String createH2oUrl = h2oRest.prepareUrl("serviceInstanceId", "2", "512m");
-        assertThat(createH2oUrl, equalTo(EFFECTIVE_URL));
+    public void prepareUrl_parametersGivenKrbTrue_urlGenerated() {
+        String createH2oUrl = h2oRest.prepareUrl("serviceInstanceId", "2", "512m", true);
+        assertThat(createH2oUrl, equalTo(EFFECTIVE_URL_KRB_ON));
+    }
+
+    @Test
+    public void prepareUrl_parametersGivenKrbFalse_urlGenerated() {
+        String createH2oUrl = h2oRest.prepareUrl("serviceInstanceId", "2", "512m", false);
+        assertThat(createH2oUrl, equalTo(EFFECTIVE_URL_KRB_OFF));
     }
 
     @Test
     public void createH2oInstance_restReturnedResponse_responsePassed() {
         //arrange
         when(restOperations
-            .postForEntity(EFFECTIVE_URL, YARN_CONF, H2oCredentials.class))
+            .postForEntity(EFFECTIVE_URL_KRB_OFF, YARN_CONF, H2oCredentials.class))
             .thenReturn(new ResponseEntity<>(H2O_CREDENTIALS, HttpStatus.OK));
 
         //act
         ResponseEntity<H2oCredentials> h2oInstanceEntity =
-            h2oRest.createH2oInstance("serviceInstanceId", "2", "512m", YARN_CONF);
+            h2oRest.createH2oInstance("serviceInstanceId", "2", "512m", false, YARN_CONF);
 
         //assert
         assertThat(h2oInstanceEntity.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(h2oInstanceEntity.getBody(), equalTo(H2O_CREDENTIALS));
         verify(restOperations, times(1))
-            .postForEntity(EFFECTIVE_URL, YARN_CONF, H2oCredentials.class);
+            .postForEntity(EFFECTIVE_URL_KRB_OFF, YARN_CONF, H2oCredentials.class);
     }
 }
