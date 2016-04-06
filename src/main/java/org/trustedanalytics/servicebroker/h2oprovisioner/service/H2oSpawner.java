@@ -79,6 +79,7 @@ public class H2oSpawner {
 
       // TODO: what if exception will be thrown by getFlowUrl?
       // should we kill h2o on yarn = undo step: spawnH2oOnYarn?
+      // We should kill - to be done after completion of DPNG-4123
 
       String host =
           Objects.requireNonNull(h2oUiFileParser.getFlowUrl(h2oUiPath(serviceInstanceId)));

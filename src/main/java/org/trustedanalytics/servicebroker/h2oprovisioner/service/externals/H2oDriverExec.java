@@ -14,13 +14,12 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.service.externals;
 
-import org.apache.hadoop.conf.Configuration;
-import org.trustedanalytics.servicebroker.h2oprovisioner.rest.H2oSpawnerException;
-import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.helpers.ExternalProcessExecutor;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+
+import org.apache.hadoop.conf.Configuration;
+import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.helpers.ExternalProcessExecutor;
 
 public class H2oDriverExec {
 

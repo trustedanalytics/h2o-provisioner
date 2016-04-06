@@ -67,20 +67,24 @@ public class ExternalProcessExecutor {
 
   private static Runnable getPrintJob(BufferedReader stream, String printPrefix) {
     return () -> {
-      String line;
       try {
-        try {
-          while ((line = stream.readLine()) != null) {
-            LOGGER.info(printPrefix + line);
-          }
-        } catch (IOException e) {
-          LOGGER.info(printPrefix + "Error while reading process output.", e);
-        } finally {
-          stream.close();
-        }
+          logStreamContent(stream, printPrefix);
       } catch (IOException e) {
         LOGGER.info(printPrefix + "Error while closing process output stream.", e);
       }
     };
+  }
+
+  private static void logStreamContent(BufferedReader stream, String linePrefix) throws IOException {
+    try {
+      String line;
+      while ((line = stream.readLine()) != null) {
+        LOGGER.info(linePrefix + line);
+      }
+    } catch (IOException e) {
+      LOGGER.info(linePrefix + "Error while reading process output.", e);
+    } finally {
+      stream.close();
+    }
   }
 }
