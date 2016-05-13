@@ -1,3 +1,5 @@
+[![Dependency Status](https://www.versioneye.com/user/projects/572367a2ba37ce004309f2c3/badge.svg?style=flat)](https://www.versioneye.com/user/projects/572367a2ba37ce004309f2c3)
+
 # h2o-provisioner
 H2O Provisioner is an application which can spawn H2O instances on YARN.
 It's prepared to be executed inside Docker container to make it easier to run it in the cloud environemnt.
