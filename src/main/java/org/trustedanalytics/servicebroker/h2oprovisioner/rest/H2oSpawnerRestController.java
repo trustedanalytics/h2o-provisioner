@@ -14,6 +14,8 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.rest;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,15 +24,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oCredentials;
+import org.trustedanalytics.servicebroker.h2oprovisioner.service.H2oDeprovisioner;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.H2oSpawner;
-
-import java.util.Map;
 
 @RestController
 public class H2oSpawnerRestController {
 
   @Autowired
   private H2oSpawner h2oSpawner;
+
+  @Autowired
+  private H2oDeprovisioner h2oDeprovisioner;
 
   @RequestMapping(value = "/rest/instances/{instanceId}/create", method = RequestMethod.POST)
   public H2oCredentials provisionH2o(@PathVariable String instanceId,
@@ -40,5 +44,11 @@ public class H2oSpawnerRestController {
 
     return h2oSpawner.provisionInstance(instanceId, memory, nodesCount, "on".equals(kerberos),
         hadoopConf);
+  }
+
+  @RequestMapping(value = "rest/instances/{instanceId}/delete", method = RequestMethod.POST)
+  public String deprovisionH2o(@PathVariable String instanceId,
+      @RequestBody Map<String, String> hadoopConf) throws H2oDeprovisioningException {
+    return h2oDeprovisioner.deprovisionInstance(instanceId, hadoopConf);
   }
 }

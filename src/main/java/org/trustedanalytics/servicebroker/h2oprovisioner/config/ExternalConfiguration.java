@@ -14,14 +14,17 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.config;
 
-import lombok.Data;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 @Configuration
-@Data
+@Getter
+@Setter
 public class ExternalConfiguration {
 
   @Value("${h2o.driver.ip}")

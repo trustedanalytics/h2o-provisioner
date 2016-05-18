@@ -11,25 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+package org.trustedanalytics.servicebroker.h2oprovisioner.rest;
 
-package org.trustedanalytics.servicebroker.h2oprovisioner.config;
+public class H2oDeprovisioningException extends Exception{
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+  private static final long serialVersionUID = -2768477304304514256L;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Component
-@ConfigurationProperties(KerberosProperties.PREFIX)
-@Getter
-@Setter
-public class KerberosProperties {
-  protected static final String PREFIX = "kerberos";
-
-  private String kdc;
-  private String realm;
-  private String user;
-  private String password;
-  private String confFile;
+  public H2oDeprovisioningException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

@@ -42,4 +42,14 @@ public interface H2oProvisionerRestApi {
    */
   ResponseEntity<H2oCredentials> createH2oInstance(String serviceInstanceId, String nodesCount,
       String memory, boolean kerberos, Map<String, String> yarnConf);
+  
+  /**
+   * Destroys H2O server.
+   * 
+   * @param serviceInstanceId service instance unique id
+   * @param yarnConf YARN configuration map
+   * 
+   * @return id of a YARN job that was killed to stop h2o instance
+   */
+  ResponseEntity<String> deleteH2oInstance(String serviceInstanceId, Map<String, String> yarnConf);
 }

@@ -14,12 +14,13 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.rest.api;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Map;
 
 @Data
 @NoArgsConstructor

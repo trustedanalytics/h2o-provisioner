@@ -14,6 +14,7 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.service;
 
+import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.DeprovisionerYarnClient;
 import org.trustedanalytics.servicebroker.h2oprovisioner.config.ExternalConfiguration;
 import org.trustedanalytics.servicebroker.h2oprovisioner.credentials.CredentialsSupplier;
 import org.trustedanalytics.servicebroker.h2oprovisioner.ports.PortsPool;
@@ -106,7 +107,7 @@ public class H2oSpawner {
   }
 
   private String jobName(String serviceInstanceId) {
-    return "H2O_BROKER_" + serviceInstanceId;
+    return DeprovisionerYarnClient.h2oJobName(serviceInstanceId);
   }
 
   private String h2oUiPath(String serviceInstanceId) {
