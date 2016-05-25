@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>h2o-provisioner</artifactId>
-	<version>0.5.3</version>
+	<version>0.5.4</version>
 
 	<parent>
 		<groupId>org.trustedanalytics</groupId>
@@ -119,21 +119,22 @@
 			<version>1.16.6</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
-			<groupId>org.trustedanalytics</groupId>
-			<artifactId>hadoop-utils</artifactId>
-			<version>0.4.3</version>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>${hadoop.version}</version>
 			<exclusions>
-				<!--<exclusion> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
-					</exclusion> -->
 				<exclusion>
-					<groupId>org.apache.curator</groupId>
-					<artifactId>curator-client</artifactId>
+					<groupId>javax.servlet.jsp</groupId>
+					<artifactId>jsp-api</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>javax.servlet</groupId>
-					<artifactId>javax.servlet-api</artifactId>
+					<groupId>tomcat</groupId>
+					<artifactId>jasper-runtime</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>tomcat</groupId>
+					<artifactId>jasper-compiler</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>javax.servlet</groupId>
@@ -141,7 +142,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
