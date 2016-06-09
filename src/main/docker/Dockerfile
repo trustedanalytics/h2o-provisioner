@@ -15,6 +15,6 @@ RUN apt-get install -y krb5-user
 RUN cat /etc/krb5.conf
 
 ADD h2odriver.jar h2odriver.jar
-ADD h2o-provisioner-0.4.3.jar app.jar
+ADD h2o-provisioner-0.5.7.jar app.jar
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
