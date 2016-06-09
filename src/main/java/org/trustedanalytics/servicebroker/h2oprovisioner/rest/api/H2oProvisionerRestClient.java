@@ -47,4 +47,13 @@ public class H2oProvisionerRestClient implements H2oProvisionerRestApi {
     LOGGER.info("calling provisioner with url '" + url + "'");
     return rest.postForEntity(url, yarnConf, H2oCredentials.class);
   }
+
+  @Override
+  public ResponseEntity<String> deleteH2oInstance(String serviceInstanceId,
+      Map<String, String> yarnConf) {
+    String url = String.format("%s/rest/instances/%s/delete", baseUrl, serviceInstanceId);
+    LOGGER.info("calling provisioner with url '" + url + "'");
+
+    return rest.postForEntity(url, yarnConf, String.class);
+  }
 }

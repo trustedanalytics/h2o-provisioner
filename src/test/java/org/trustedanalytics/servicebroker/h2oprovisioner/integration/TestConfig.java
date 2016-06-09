@@ -14,11 +14,16 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.integration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.DeprovisionerYarnClientProvider;
+import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.KerberosClient;
+import org.trustedanalytics.servicebroker.h2oprovisioner.config.KerberosProperties;
 import org.trustedanalytics.servicebroker.h2oprovisioner.credentials.CredentialsSupplier;
 import org.trustedanalytics.servicebroker.h2oprovisioner.ports.PortsPool;
+import org.trustedanalytics.servicebroker.h2oprovisioner.service.H2oDeprovisioner;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oDriverExec;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oUiFileParser;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.KinitExec;
@@ -61,5 +66,24 @@ public class TestConfig {
   @Bean
   public H2oUiFileParser h2oUiFileParser() {
     return mock(H2oUiFileParser.class);
+  }
+
+  @Bean
+  @Autowired
+  public H2oDeprovisioner getH2oDeprovisioner(KerberosProperties kerberosProperties,
+      KerberosClient kerberosClient,
+      DeprovisionerYarnClientProvider deprovisionerYarnClientProvider) {
+    return new H2oDeprovisioner(kerberosProperties.getUser(), kerberosClient,
+        deprovisionerYarnClientProvider);
+  }
+
+  @Bean
+  public KerberosClient kerberosClient() {
+    return mock(KerberosClient.class);
+  }
+
+  @Bean
+  public DeprovisionerYarnClientProvider deprovisionerYarnClientProvider() {
+    return mock(DeprovisionerYarnClientProvider.class);
   }
 }

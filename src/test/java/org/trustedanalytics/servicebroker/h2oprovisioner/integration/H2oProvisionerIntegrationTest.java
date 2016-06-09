@@ -70,7 +70,7 @@ public class H2oProvisionerIntegrationTest {
 
   @Autowired
   public H2oUiFileParser h2oUiFileParser;
-
+  
   @Test
   public void testCreateServiceInstance_success_shouldReturnCreatedInstance() throws Exception {
     // arrange

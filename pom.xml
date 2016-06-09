@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>h2o-provisioner</artifactId>
-	<version>0.5.5</version>
+	<version>0.5.6</version>
 
 	<parent>
 		<groupId>org.trustedanalytics</groupId>
@@ -13,10 +13,10 @@
 
 	<properties>
 		<start-class>org.trustedanalytics.servicebroker.h2oprovisioner.Application</start-class>
-		<jacoco-measurement-instructions>0.3000</jacoco-measurement-instructions>
-		<jacoco-measurement-branches>0.05000</jacoco-measurement-branches>
-		<jacoco-measurement-lines>0.4000</jacoco-measurement-lines>
-		<jacoco-measurement-classes>0.7000</jacoco-measurement-classes>
+		<jacoco-measurement-instructions>0.500</jacoco-measurement-instructions>
+		<jacoco-measurement-branches>0.200</jacoco-measurement-branches>
+		<jacoco-measurement-lines>0.550</jacoco-measurement-lines>
+		<jacoco-measurement-classes>0.600</jacoco-measurement-classes>
 	</properties>
 	<scm>
 		<connection>scm:git:git@h2o-broker:trustedanalytics/h2o-broker.git</connection>
@@ -162,5 +162,60 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-yarn-client</artifactId>
+			<version>${hadoop.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.trustedanalytics</groupId>
+			<artifactId>hadoop-utils</artifactId>
+			<version>0.6.11</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.curator</groupId>
+					<artifactId>curator-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hbase</groupId>
+					<artifactId>hbase-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hbase</groupId>
+					<artifactId>hbase-common</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>powermock-release-with-junit-mockito-dependencies</artifactId>
+					<groupId>org.powermock</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 </project>

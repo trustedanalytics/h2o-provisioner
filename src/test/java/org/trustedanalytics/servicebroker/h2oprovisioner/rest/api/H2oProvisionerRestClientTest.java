@@ -14,7 +14,13 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.rest.api;
 
-import com.google.common.collect.ImmutableMap;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestOperations;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class H2oProvisionerRestClientTest {
@@ -39,6 +41,8 @@ public class H2oProvisionerRestClientTest {
       "http://baseUrl.com/rest/instances/serviceInstanceId/create?nodesCount=2&memory=512m&kerberos=";
   private static final String EFFECTIVE_URL_KRB_ON = EFFECTIVE_URL_BASE + "on";
   private static final String EFFECTIVE_URL_KRB_OFF = EFFECTIVE_URL_BASE + "off";
+  private static final String EFFECTIVE_URL_DELETE =
+      "http://baseUrl.com/rest/instances/serviceInstanceId/delete";
 
   private static final ImmutableMap<String, String> YARN_CONF =
       ImmutableMap.of("key1", "value1", "key2", "value2");
@@ -82,5 +86,21 @@ public class H2oProvisionerRestClientTest {
     assertThat(h2oInstanceEntity.getBody(), equalTo(H2O_CREDENTIALS));
     verify(restOperations, times(1)).postForEntity(EFFECTIVE_URL_KRB_OFF, YARN_CONF,
         H2oCredentials.class);
+  }
+
+  @Test
+  public void deleteH2oInstance_restReturnedResponse_responsePassed() {
+    //arrange
+    String expectedJobId = "12098410";
+    when(h2oRest.deleteH2oInstance("serviceInstanceId", YARN_CONF))
+        .thenReturn(new ResponseEntity<>(expectedJobId, HttpStatus.OK));
+    
+    // act
+    ResponseEntity<String> response = h2oRest.deleteH2oInstance("serviceInstanceId", YARN_CONF);
+
+    // assert
+    verify(restOperations, times(1)).postForEntity(EFFECTIVE_URL_DELETE, YARN_CONF, String.class);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(expectedJobId, response.getBody());
   }
 }
