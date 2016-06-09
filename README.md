@@ -11,7 +11,7 @@ The default use case of H2O Proviosioner is to spawn H2O instances on demand. It
 
 
 ## REST Interface
-There is one method in REST Interface:
+### Provisioning H2O instance
 
 Path: ```/rest/instances/{instanceId}/create```
 
@@ -31,13 +31,11 @@ Required params:
   * Request body
   * Format:
   ```json
-  {"HADOOP_CONFIG_KEY":
     {
       "property1.name":"property1.value",
       "property2.name":"property2.value",
       ...
     }
-  }
   ```
   
 Response format:
@@ -49,7 +47,30 @@ Response format:
     "username": "b20qy4sm"
   }
   ```
+### Deprovisioning H2O instance
+Path: ```/rest/instances/{instanceId}/delete```
 
+Allowed method: POST
+
+Required params:
+* instanceId
+  * Path variable
+  * Unique identifier of running h2o instance (provided with provisioning request)
+* YARN configuration
+  * Request body
+  * Format:
+  ```json
+    {
+      "property1.name":"property1.value",
+      "property2.name":"property2.value",
+      ...
+    }
+  ```
+  
+Response format:
+  ```text
+  <killed YARN job id>
+  ```
 
 ## Run
 
@@ -116,17 +137,26 @@ curl -i "1ocalhost:8080/rest/instances/instanceName/create?memory=512m&nodesCoun
 where request body is yarn-conf in JSON format.
 Above instruction will spawn 1-node h2o instance with 512m memory and name "instanceName"
 
+```
+curl -i "1ocalhost:8080/rest/instances/instanceName/delete" \
+-X POST -H "Content-Type: application/json" \
+-d '{"<name1>": "<value1>", "<name2>": "<value2>", ... "<nameN>": "<valueN>"}'
+```
+where request body is yarn-conf in JSON format.
+Above instruction will kill YARN job H2O instance "instanceName" was spawn on.
+
 ### Call h2o-provisioner from Java application:
 Add dependency to client library into your maven pom.xml file:
 ```
 <dependency>
   <groupId>org.trustedanalytics</groupId>
   <artifactId>h2o-provisioner</artifactId>
-  <version>0.4.0</version>
+  <version>0.5.8</version>
   <classifier>api</classifier>
 </dependency>
 ```
 
+#### Provisioning H2O instance
 Using below class you can call h2o-provisioner started on localhost. You should invoke ```test()``` method with ```Map<String, String>``` object containing YARN configuration.
 ```java
 import org.springframework.http.ResponseEntity;
@@ -152,7 +182,29 @@ public class H2oProvisionerCall {
     }
 }
 ```
+#### Deprovisioning H2O instance
+Using below class you can call h2o-provisioner started on localhost. You should invoke ```test()``` method with ```Map<String, String>``` object containing YARN configuration.
+```java
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oProvisionerRestApi;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oProvisionerRestClient;
 
+import java.util.Map;
 
+public class H2oProvisionerCall {
+
+    public void test(Map<String, String> yarnConfig) {
+
+        H2oProvisionerRestApi h2oRest =
+            new H2oProvisionerRestClient("localhost:8080", new RestTemplate());
+
+        ResponseEntity<String> response = h2oRest.deleteH2oInstance("instance-ID", yarnConfig);
+
+        System.out.println("HTTP response status: " + response.getStatusCode());
+        System.out.println("Killed H2O YARN job id: " + response.getBody());
+    }
+}
+```
 
 
