@@ -54,4 +54,8 @@ public class ExternalConfiguration {
   @Value("${yarn.conf.dir}")
   @NotNull
   private String yarnConfDir;
+  
+  @Value("${nokrb.default.username}")
+  @NotNull
+  private String nokrbDefaultUsername;
 }

@@ -35,6 +35,7 @@ import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.Kinit
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -85,6 +86,7 @@ public class H2oSpawnerTest {
     ExternalConfiguration config = new ExternalConfiguration();
     config.setH2oDriverJarpath(DRIVER_JAR_PATH);
     config.setH2oDriverIp(DRIVER_IP);
+    config.setNokrbDefaultUsername("cf");
 
     when(portsPool.getPort()).thenReturn(DRIVER_CALLBACK_PORT);
     when(usernameSupplier.get()).thenReturn(H2O_USER);
@@ -117,14 +119,14 @@ public class H2oSpawnerTest {
     expectedException.expect(H2oSpawnerException.class);
     expectedException.expectMessage("Unable to provision h2o for: " + INSTANCE_ID);
     doThrow(new IOException()).when(h2oDriverExec).spawnH2oOnYarn(h2oDriverArgs(),
-        hadoopConf(YARN_CONF));
+        commandEnvVariablesForKrb(), hadoopConf(YARN_CONF));
 
     // act
     h2oSpawner.provisionInstance(INSTANCE_ID, H2O_MEMORY, H2O_NODES, true, YARN_CONF);
 
     // assert
     verifyKinitCalled();
-    verifyDriverCalled();
+    verifyDriverCalledForKrb();
   }
 
   @Test
@@ -141,7 +143,7 @@ public class H2oSpawnerTest {
 
     // assert
     verifyKinitCalled();
-    verifyDriverCalled();
+    verifyDriverCalledForKrb();
     verifyUiFileParserCalled();
   }
 
@@ -162,7 +164,7 @@ public class H2oSpawnerTest {
     assertThat(actualH2oCredentials.getUsername(), equalTo(H2O_USER));
     assertThat(actualH2oCredentials.getPassword(), equalTo(H2O_PASSWORD));
     verifyKinitCalled();
-    verifyDriverCalled();
+    verifyDriverCalledForKrb();
     verifyUiFileParserCalled();
   }
 
@@ -183,7 +185,7 @@ public class H2oSpawnerTest {
     assertThat(actualH2oCredentials.getUsername(), equalTo(H2O_USER));
     assertThat(actualH2oCredentials.getPassword(), equalTo(H2O_PASSWORD));
     verifyKinitNotCalled();
-    verifyDriverCalled();
+    verifyDriverCalledForNonKrb();
     verifyUiFileParserCalled();
   }
 
@@ -195,9 +197,19 @@ public class H2oSpawnerTest {
     verifyNoMoreInteractions(kinitExec);
   }
 
-  private void verifyDriverCalled() throws Exception {
+  private void verifyDriverCalledForNonKrb() throws Exception {
     ArgumentCaptor<Configuration> hadoopConfCaptor = ArgumentCaptor.forClass(Configuration.class);
-    verify(h2oDriverExec, times(1)).spawnH2oOnYarn(eq(h2oDriverArgs()), hadoopConfCaptor.capture());
+    verify(h2oDriverExec, times(1)).spawnH2oOnYarn(eq(h2oDriverArgs()), eq(commandEnvVariablesForNonKrb()),
+        hadoopConfCaptor.capture());
+    Configuration yarnConf = hadoopConfCaptor.getValue();
+    assertThat(yarnConf.get("key1"), equalTo("value1"));
+    assertThat(yarnConf.get("key2"), equalTo("value2"));
+  }
+  
+  private void verifyDriverCalledForKrb() throws Exception {
+    ArgumentCaptor<Configuration> hadoopConfCaptor = ArgumentCaptor.forClass(Configuration.class);
+    verify(h2oDriverExec, times(1)).spawnH2oOnYarn(eq(h2oDriverArgs()), eq(commandEnvVariablesForKrb()),
+        hadoopConfCaptor.capture());
     Configuration yarnConf = hadoopConfCaptor.getValue();
     assertThat(yarnConf.get("key1"), equalTo("value1"));
     assertThat(yarnConf.get("key2"), equalTo("value2"));
@@ -222,5 +234,13 @@ public class H2oSpawnerTest {
     Configuration hadoopConf = new Configuration(false);
     yarnConf.forEach(hadoopConf::set);
     return hadoopConf;
+  }
+
+  private Map<String, String> commandEnvVariablesForNonKrb() {
+    return ImmutableMap.of("HADOOP_USER_NAME", "cf");
+  }
+  
+  private Map<String, String> commandEnvVariablesForKrb() {
+    return new HashMap<String, String>();
   }
 }

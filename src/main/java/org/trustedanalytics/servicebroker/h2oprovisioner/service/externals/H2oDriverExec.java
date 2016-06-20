@@ -17,6 +17,7 @@ package org.trustedanalytics.servicebroker.h2oprovisioner.service.externals;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.helpers.ExternalProcessExecutor;
@@ -29,13 +30,13 @@ public class H2oDriverExec {
     this.yarnConfDir = yarnConfDir;
   }
 
-  public void spawnH2oOnYarn(String[] command, Configuration hadoopConf)
+  public void spawnH2oOnYarn(String[] command, Map<String, String> commandEnvVariables, Configuration hadoopConf)
       throws ExternalProcessException, IOException {
     try (FileOutputStream stream = new FileOutputStream(yarnConfDir + "/yarn-site.xml")) {
       hadoopConf.writeXml(new OutputStreamWriter(stream));
     }
 
-    int h2oExitCode = ExternalProcessExecutor.runCommand(command);
+    int h2oExitCode = ExternalProcessExecutor.runCommand(command, commandEnvVariables);
     if (h2oExitCode != 0) {
       throw new ExternalProcessException("h2odriver.jar exited with code " + h2oExitCode);
     }

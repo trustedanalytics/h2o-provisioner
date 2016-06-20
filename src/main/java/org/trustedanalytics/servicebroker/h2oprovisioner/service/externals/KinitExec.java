@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 public class KinitExec {
 
@@ -61,7 +62,7 @@ public class KinitExec {
     LOGGER.info("Try to log in kerberos");
     String[] loginCmd =
         {"/bin/sh", "-c", "echo " + krb.getPassword() + " | kinit " + krb.getUser()};
-    int kinitExitCode = ExternalProcessExecutor.runCommand(loginCmd);
+    int kinitExitCode = ExternalProcessExecutor.runCommand(loginCmd, new HashMap<String, String>());
     if (kinitExitCode != 0) {
       throw new ExternalProcessException("kinit exited with code " + kinitExitCode);
     }
