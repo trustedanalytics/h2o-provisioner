@@ -24,18 +24,23 @@ import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oDr
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oUiFileParser;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.KinitExec;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class H2oSpawner {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(H2oSpawner.class);
+
+  private static final String HADOOP_USER_NAME_ENV_VAR = "HADOOP_USER_NAME";
 
   private final ExternalConfiguration externalConfiguration;
   private final PortsPool portsPool;
@@ -70,13 +75,18 @@ public class H2oSpawner {
       String[] command = getH2oDriverCommand(serviceInstanceId, user, password, memory, nodesCount);
       LOGGER.info("with such command: " + Arrays.toString(command));
 
-      if (kerberos) {
-        kinit.loginToKerberos();
-      }
-
       Configuration hadoopConf = new Configuration(false);
       hadoopConfiguration.forEach(hadoopConf::set);
-      h2oDriver.spawnH2oOnYarn(command, hadoopConf);
+
+
+      if (kerberos) {
+        kinit.loginToKerberos();
+        h2oDriver.spawnH2oOnYarn(command, new HashMap<String, String>(), hadoopConf);
+      } else {
+        h2oDriver.spawnH2oOnYarn(command, ImmutableMap.of(HADOOP_USER_NAME_ENV_VAR,
+            externalConfiguration.getNokrbDefaultUsername()), hadoopConf);
+      }
+
 
       // TODO: what if exception will be thrown by getFlowUrl?
       // should we kill h2o on yarn = undo step: spawnH2oOnYarn?

@@ -21,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ExternalProcessExecutor {
@@ -29,7 +31,7 @@ public class ExternalProcessExecutor {
 
   private ExternalProcessExecutor() {}
 
-  public static int runCommand(String[] command) throws IOException {
+  public static int runCommand(String[] command, Map<String, String> commandEnvVariables) throws IOException {
     String lineToRun = Arrays.asList(command).stream().collect(Collectors.joining(" "));
 
     LOGGER.info("===================");
@@ -37,7 +39,7 @@ public class ExternalProcessExecutor {
     LOGGER.info(lineToRun);
     LOGGER.info("===================");
 
-    Process pr = Runtime.getRuntime().exec(command);
+    Process pr = Runtime.getRuntime().exec(command, getProcessEnvWithVariables(commandEnvVariables));
     BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
     BufferedReader err = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
 
@@ -86,5 +88,18 @@ public class ExternalProcessExecutor {
     } finally {
       stream.close();
     }
+  }
+  
+  private static String[] getProcessEnvWithVariables(Map<String, String> variables) {
+    Map<String, String> environment = new HashMap<String, String>(System.getenv());
+    environment.putAll(variables);
+
+    String[] processEnv = new String[environment.size()];
+    int count = 0;
+    for (Map.Entry<String, String> variable : environment.entrySet()) {
+      processEnv[count++] = variable.getKey() + "=" + variable.getValue();
+    }
+
+    return processEnv;
   }
 }

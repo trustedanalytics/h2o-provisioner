@@ -37,6 +37,7 @@ import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oDr
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oUiFileParser;
 import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.KinitExec;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -103,6 +104,7 @@ public class H2oProvisionerIntegrationTest {
         NODES_COUNT, "-output", "/tmp/h2o/" + INSTANCE_ID, "-jobname", "H2O_BROKER_" + INSTANCE_ID,
         "-notify", "h2o_ui_" + INSTANCE_ID, "-username", TestConfig.FAKE_H2O_INSTANCE_USERNAME,
         "-password", TestConfig.FAKE_H2O_INSTANCE_PASSWORD, "-disown",}),
+        eq(new HashMap<String, String>()), 
         hadoopConfCaptor.capture());
     Configuration yarnConf = hadoopConfCaptor.getValue();
     assertThat(yarnConf.get("key1"), equalTo("value1"));

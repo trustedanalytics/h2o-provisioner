@@ -17,6 +17,7 @@ h2o:
     passwordLength: 12
 
 yarn.conf.dir: fakeYarnConfDir
+nokrb.default.username: cf
 
 
 
