@@ -48,8 +48,9 @@ public interface H2oProvisionerRestApi {
    * 
    * @param serviceInstanceId service instance unique id
    * @param yarnConf YARN configuration map
+   * @param kerberos true if kerberos authentication should be performed
    * 
    * @return id of a YARN job that was killed to stop h2o instance
    */
-  ResponseEntity<String> deleteH2oInstance(String serviceInstanceId, Map<String, String> yarnConf);
+  ResponseEntity<String> deleteH2oInstance(String serviceInstanceId, Map<String, String> yarnConf, boolean kerberos);
 }

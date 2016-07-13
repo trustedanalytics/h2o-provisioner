@@ -42,7 +42,7 @@ public class H2oProvisionerRestClientTest {
   private static final String EFFECTIVE_URL_KRB_ON = EFFECTIVE_URL_BASE + "on";
   private static final String EFFECTIVE_URL_KRB_OFF = EFFECTIVE_URL_BASE + "off";
   private static final String EFFECTIVE_URL_DELETE =
-      "http://baseUrl.com/rest/instances/serviceInstanceId/delete";
+      "http://baseUrl.com/rest/instances/serviceInstanceId/delete?kerberos=on";
 
   private static final ImmutableMap<String, String> YARN_CONF =
       ImmutableMap.of("key1", "value1", "key2", "value2");
@@ -92,11 +92,11 @@ public class H2oProvisionerRestClientTest {
   public void deleteH2oInstance_restReturnedResponse_responsePassed() {
     //arrange
     String expectedJobId = "12098410";
-    when(h2oRest.deleteH2oInstance("serviceInstanceId", YARN_CONF))
+    when(h2oRest.deleteH2oInstance("serviceInstanceId", YARN_CONF, true))
         .thenReturn(new ResponseEntity<>(expectedJobId, HttpStatus.OK));
     
     // act
-    ResponseEntity<String> response = h2oRest.deleteH2oInstance("serviceInstanceId", YARN_CONF);
+    ResponseEntity<String> response = h2oRest.deleteH2oInstance("serviceInstanceId", YARN_CONF, true);
 
     // assert
     verify(restOperations, times(1)).postForEntity(EFFECTIVE_URL_DELETE, YARN_CONF, String.class);

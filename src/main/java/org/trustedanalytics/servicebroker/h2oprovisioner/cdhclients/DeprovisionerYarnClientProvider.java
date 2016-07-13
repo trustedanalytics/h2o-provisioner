@@ -33,5 +33,4 @@ public class DeprovisionerYarnClientProvider {
     
     return new DeprovisionerYarnClient(client);
   }
-
 }

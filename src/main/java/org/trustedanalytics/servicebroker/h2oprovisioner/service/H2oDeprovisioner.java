@@ -44,17 +44,31 @@ public class H2oDeprovisioner {
   }
 
 
-  public String deprovisionInstance(String serviceInstanceId, Map<String, String> hadoopConfiguration)
+  public String deprovisionInstance(String serviceInstanceId,
+      Map<String, String> hadoopConfiguration, boolean kerberosOn)
       throws H2oDeprovisioningException {
     LOGGER.debug("Reading hadoop configuration...");
     Configuration hadoopConf = new Configuration(false);
     hadoopConfiguration.forEach(hadoopConf::set);
     LOGGER.debug("Configuration read.");
 
-    Configuration loggedHadoopConf = logInAndGetConfig(hadoopConf);
+    try {
+      DeprovisionerYarnClient yarnClient;
+      LOGGER.debug("Creating yarn client...");
+      if (kerberosOn) {
+        Configuration loggedHadoopConf = logInAndGetConfig(hadoopConf);
+        yarnClient = yarnClientProvider.getClient(kerberosUser, loggedHadoopConf);
+      } else {
+        yarnClient = yarnClientProvider.getClient(kerberosUser, hadoopConf);
+      }
+      LOGGER.debug("Yarn client created.");
 
-    return deprovisionH2o(loggedHadoopConf, serviceInstanceId);
-
+      return deprovisionH2o(yarnClient, serviceInstanceId);
+      
+    } catch (IOException e) {
+      throw new H2oDeprovisioningException(
+          "Unable to create yarn client." + e.getMessage(), e);
+    }
   }
 
   private Configuration logInAndGetConfig(Configuration hadoopConf)
@@ -67,14 +81,12 @@ public class H2oDeprovisioner {
     }
   }
 
-  private String deprovisionH2o(Configuration loggedHadoopConf, String serviceInstanceId)
+  private String deprovisionH2o(DeprovisionerYarnClient yarnClient, String serviceInstanceId)
       throws H2oDeprovisioningException {
     try {
-      LOGGER.debug("Configuring and starting yarn client...");
-      DeprovisionerYarnClient yarnClient =
-          yarnClientProvider.getClient(kerberosUser, loggedHadoopConf);
+      LOGGER.debug("Starting yarn client...");
       yarnClient.start();
-      LOGGER.debug("Yarn client configured and started.");
+      LOGGER.debug("Yarn client started.");
 
       LOGGER.debug("Extracting job Id...");
       ApplicationId h2oServerJobId = yarnClient.getH2oJobId(serviceInstanceId);
