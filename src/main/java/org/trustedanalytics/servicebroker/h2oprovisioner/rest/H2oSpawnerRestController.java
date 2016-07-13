@@ -48,7 +48,9 @@ public class H2oSpawnerRestController {
 
   @RequestMapping(value = "rest/instances/{instanceId}/delete", method = RequestMethod.POST)
   public String deprovisionH2o(@PathVariable String instanceId,
-      @RequestBody Map<String, String> hadoopConf) throws H2oDeprovisioningException {
-    return h2oDeprovisioner.deprovisionInstance(instanceId, hadoopConf);
+      @RequestBody Map<String, String> hadoopConf,
+      @RequestParam(required = false, defaultValue = "on") String kerberos)
+      throws H2oDeprovisioningException {
+    return h2oDeprovisioner.deprovisionInstance(instanceId, hadoopConf, "on".equals(kerberos));
   }
 }

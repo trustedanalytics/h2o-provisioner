@@ -75,13 +75,13 @@ public class H2oDeprovisionerTest {
   }
 
   @Test
-  public void deprovisionInstance_EverythingWorks_AllExternalsCalled() throws Exception {
+  public void deprovisionInstanceForKrb_EverythingWorks_AllExternalsCalled() throws Exception {
     // given
     H2oDeprovisioner sut =
         new H2oDeprovisioner(kerberosUser, kerberosClientMock, yarnClientProviderMock);
 
     // when
-    String killedJobId = sut.deprovisionInstance(testInstanceId, testHadoopConf);
+    String killedJobId = sut.deprovisionInstance(testInstanceId, testHadoopConf, true);
 
     // then
     ArgumentCaptor<Configuration> hadoopConfCaptor = ArgumentCaptor.forClass(Configuration.class);
@@ -96,7 +96,7 @@ public class H2oDeprovisionerTest {
   }
 
   @Test
-  public void deprovisionInstance_KerberosClientThrowsLoginException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_KerberosClientThrowsLoginException_ExcpetionThrown()
       throws Exception {
     // given
     when(kerberosClientMock.logInToKerberos(any())).thenThrow(new LoginException());
@@ -106,11 +106,11 @@ public class H2oDeprovisionerTest {
     // when
     //then
     thrown.expect(H2oDeprovisioningException.class);
-    sut.deprovisionInstance(testInstanceId, testHadoopConf);
+    sut.deprovisionInstance(testInstanceId, testHadoopConf, true);
   }
   
   @Test
-  public void deprovisionInstance_KerberosClientThrowsIOException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_KerberosClientThrowsIOException_ExcpetionThrown()
       throws Exception {
     // given
     when(kerberosClientMock.logInToKerberos(any())).thenThrow(new IOException());
@@ -120,11 +120,11 @@ public class H2oDeprovisionerTest {
     // when
     //then
     thrown.expect(H2oDeprovisioningException.class);
-    sut.deprovisionInstance(testInstanceId, testHadoopConf);
+    sut.deprovisionInstance(testInstanceId, testHadoopConf, true);
   }
   
   @Test
-  public void deprovisionInstance_YarnClientProviderThrowsIOException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_YarnClientProviderThrowsIOException_ExcpetionThrown()
       throws Exception {
     // given
     when(yarnClientProviderMock.getClient(kerberosUser, expectedHadoopConf)).thenThrow(new IOException());
@@ -134,12 +134,12 @@ public class H2oDeprovisionerTest {
     // when
     //then
     thrown.expect(H2oDeprovisioningException.class);
-    sut.deprovisionInstance(testInstanceId, testHadoopConf);
+    sut.deprovisionInstance(testInstanceId, testHadoopConf, true);
   }
 
   
   @Test
-  public void deprovisionInstance_YarnClientWhenGettingJobIdThrowsYarnException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_YarnClientWhenGettingJobIdThrowsYarnException_ExcpetionThrown()
       throws Exception {
     // given
     when(yarnClientMock.getH2oJobId(testInstanceId)).thenThrow(new YarnException());
@@ -149,11 +149,11 @@ public class H2oDeprovisionerTest {
     // when
     //then
     thrown.expect(H2oDeprovisioningException.class);
-    sut.deprovisionInstance(testInstanceId, testHadoopConf);
+    sut.deprovisionInstance(testInstanceId, testHadoopConf, true);
   }
   
   @Test
-  public void deprovisionInstance_YarnClientWhenKillingJobThrowsYarnException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_YarnClientWhenKillingJobThrowsYarnException_ExcpetionThrown()
       throws Exception {
     // given
     doThrow(new YarnException()).when(yarnClientMock).killApplication(applicationIdMock);
@@ -163,11 +163,11 @@ public class H2oDeprovisionerTest {
     // when
     //then
     thrown.expect(H2oDeprovisioningException.class);
-    sut.deprovisionInstance(testInstanceId, testHadoopConf);
+    sut.deprovisionInstance(testInstanceId, testHadoopConf, true);
   }
   
   @Test
-  public void deprovisionInstance_YarnClientWhenKillingJobThrowsIOException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_YarnClientWhenKillingJobThrowsIOException_ExcpetionThrown()
       throws Exception {
     // given
     doThrow(new IOException()).when(yarnClientMock).killApplication(applicationIdMock);
@@ -177,6 +177,6 @@ public class H2oDeprovisionerTest {
     // when
     //then
     thrown.expect(H2oDeprovisioningException.class);
-    sut.deprovisionInstance(testInstanceId, testHadoopConf);
+    sut.deprovisionInstance(testInstanceId, testHadoopConf, true);
   }
 }

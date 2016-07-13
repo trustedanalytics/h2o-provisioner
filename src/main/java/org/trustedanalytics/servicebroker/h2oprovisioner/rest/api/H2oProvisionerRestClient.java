@@ -50,8 +50,9 @@ public class H2oProvisionerRestClient implements H2oProvisionerRestApi {
 
   @Override
   public ResponseEntity<String> deleteH2oInstance(String serviceInstanceId,
-      Map<String, String> yarnConf) {
-    String url = String.format("%s/rest/instances/%s/delete", baseUrl, serviceInstanceId);
+      Map<String, String> yarnConf, boolean kerberos) {
+    String url = String.format("%s/rest/instances/%s/delete?kerberos=%s", baseUrl,
+        serviceInstanceId, kerberos ? "on" : "off");
     LOGGER.info("calling provisioner with url '" + url + "'");
 
     return rest.postForEntity(url, yarnConf, String.class);
