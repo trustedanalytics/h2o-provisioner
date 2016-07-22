@@ -20,6 +20,7 @@ import javax.security.auth.login.LoginException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.hadoop.yarn.exceptions.ApplicationNotFoundException;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.Deprovisione
 import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.DeprovisionerYarnClientProvider;
 import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.KerberosClient;
 import org.trustedanalytics.servicebroker.h2oprovisioner.rest.H2oDeprovisioningException;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.JobNotFoundException;
 
 public class H2oDeprovisioner {
 
@@ -46,7 +48,7 @@ public class H2oDeprovisioner {
 
   public String deprovisionInstance(String serviceInstanceId,
       Map<String, String> hadoopConfiguration, boolean kerberosOn)
-      throws H2oDeprovisioningException {
+          throws H2oDeprovisioningException, JobNotFoundException {
     LOGGER.debug("Reading hadoop configuration...");
     Configuration hadoopConf = new Configuration(false);
     hadoopConfiguration.forEach(hadoopConf::set);
@@ -82,7 +84,7 @@ public class H2oDeprovisioner {
   }
 
   private String deprovisionH2o(DeprovisionerYarnClient yarnClient, String serviceInstanceId)
-      throws H2oDeprovisioningException {
+          throws H2oDeprovisioningException, JobNotFoundException {
     try {
       LOGGER.debug("Starting yarn client...");
       yarnClient.start();

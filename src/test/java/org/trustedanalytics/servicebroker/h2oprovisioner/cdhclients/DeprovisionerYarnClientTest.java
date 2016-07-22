@@ -43,6 +43,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.ImmutableList;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.JobNotFoundException;
 
 public class DeprovisionerYarnClientTest {
 
@@ -117,10 +118,9 @@ public class DeprovisionerYarnClientTest {
 
     // when
     // then
-    thrown.expect(YarnException.class);
-    thrown.expectMessage("Found 0 apps with name " + expectedH2oJobName);
+    thrown.expect(JobNotFoundException.class);
+    thrown.expectMessage("No such H2O job on YARN exists");
     sut.getH2oJobId(testServiceInstanceId);
-
   }
 
   @Test
@@ -135,7 +135,6 @@ public class DeprovisionerYarnClientTest {
     thrown.expect(YarnException.class);
     thrown.expectMessage("Found 2 apps with name " + expectedH2oJobName);
     sut.getH2oJobId(testServiceInstanceId);
-
   }
 
   @Test

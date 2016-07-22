@@ -50,7 +50,7 @@ public class H2oSpawnerRestController {
   public String deprovisionH2o(@PathVariable String instanceId,
       @RequestBody Map<String, String> hadoopConf,
       @RequestParam(required = false, defaultValue = "on") String kerberos)
-      throws H2oDeprovisioningException {
+      throws H2oDeprovisioningException, JobNotFoundException {
     return h2oDeprovisioner.deprovisionInstance(instanceId, hadoopConf, "on".equals(kerberos));
   }
 }

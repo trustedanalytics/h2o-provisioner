@@ -15,7 +15,7 @@ RUN apt-get install -y krb5-user
 RUN cat /etc/krb5.conf
 
 ADD h2odriver.jar h2odriver.jar
-ADD h2o-provisioner-0.5.11.jar app.jar
+ADD h2o-provisioner-0.5.12.jar app.jar
 
 EXPOSE 8080 54310-54319
 

@@ -27,6 +27,7 @@ import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.JobNotFoundException;
 
 public class DeprovisionerYarnClient {
 
@@ -43,7 +44,7 @@ public class DeprovisionerYarnClient {
     tapYarnClient.start();
   }
 
-  public ApplicationId getH2oJobId(String serviceInstanceId) throws YarnException {
+  public ApplicationId getH2oJobId(String serviceInstanceId) throws YarnException, JobNotFoundException {
     String h2oJobName = DeprovisionerYarnClient.h2oJobName(serviceInstanceId);
 
     List<ApplicationReport> foundJobs;
@@ -53,7 +54,11 @@ public class DeprovisionerYarnClient {
       throw new YarnException("Error obtaining H2O job id from YARN: ", e);
     }
 
-    if (foundJobs.size() != 1) {
+    if (foundJobs.isEmpty()) {
+      throw new JobNotFoundException("No such H2O job on YARN exists");
+    }
+
+    if (foundJobs.size() > 1) {
       throw new YarnException("Error obtaining H2O job id from YARN. Found " + foundJobs.size()
           + " apps with name " + h2oJobName);
     } else {

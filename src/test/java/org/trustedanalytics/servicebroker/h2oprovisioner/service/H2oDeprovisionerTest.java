@@ -96,7 +96,7 @@ public class H2oDeprovisionerTest {
   }
 
   @Test
-  public void deprovisionInstanceForKrb_KerberosClientThrowsLoginException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_KerberosClientThrowsLoginException_ExceptionThrown()
       throws Exception {
     // given
     when(kerberosClientMock.logInToKerberos(any())).thenThrow(new LoginException());
@@ -110,7 +110,7 @@ public class H2oDeprovisionerTest {
   }
   
   @Test
-  public void deprovisionInstanceForKrb_KerberosClientThrowsIOException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_KerberosClientThrowsIOException_ExceptionThrown()
       throws Exception {
     // given
     when(kerberosClientMock.logInToKerberos(any())).thenThrow(new IOException());
@@ -124,7 +124,7 @@ public class H2oDeprovisionerTest {
   }
   
   @Test
-  public void deprovisionInstanceForKrb_YarnClientProviderThrowsIOException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_YarnClientProviderThrowsIOException_ExceptionThrown()
       throws Exception {
     // given
     when(yarnClientProviderMock.getClient(kerberosUser, expectedHadoopConf)).thenThrow(new IOException());
@@ -139,7 +139,7 @@ public class H2oDeprovisionerTest {
 
   
   @Test
-  public void deprovisionInstanceForKrb_YarnClientWhenGettingJobIdThrowsYarnException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_YarnClientWhenGettingJobIdThrowsYarnException_ExceptionThrown()
       throws Exception {
     // given
     when(yarnClientMock.getH2oJobId(testInstanceId)).thenThrow(new YarnException());
@@ -153,7 +153,7 @@ public class H2oDeprovisionerTest {
   }
   
   @Test
-  public void deprovisionInstanceForKrb_YarnClientWhenKillingJobThrowsYarnException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_YarnClientWhenKillingJobThrowsYarnException_ExceptionThrown()
       throws Exception {
     // given
     doThrow(new YarnException()).when(yarnClientMock).killApplication(applicationIdMock);
@@ -167,7 +167,7 @@ public class H2oDeprovisionerTest {
   }
   
   @Test
-  public void deprovisionInstanceForKrb_YarnClientWhenKillingJobThrowsIOException_ExcpetionThrown()
+  public void deprovisionInstanceForKrb_YarnClientWhenKillingJobThrowsIOException_ExceptionThrown()
       throws Exception {
     // given
     doThrow(new IOException()).when(yarnClientMock).killApplication(applicationIdMock);
