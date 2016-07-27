@@ -21,6 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,8 +30,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestOperations;
-
-import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class H2oProvisionerRestClientTest {
@@ -54,8 +53,11 @@ public class H2oProvisionerRestClientTest {
 
   private H2oProvisionerRestApi h2oRest;
 
+  private H2oProvisionerRequestData params;
+
   @Before
   public void setup() {
+    params = new H2oProvisionerRequestData(YARN_CONF, "fakeToken");
     h2oRest = new H2oProvisionerRestClient(BASE_URL, restOperations);
   }
 
@@ -74,17 +76,17 @@ public class H2oProvisionerRestClientTest {
   @Test
   public void createH2oInstance_restReturnedResponse_responsePassed() {
     // arrange
-    when(restOperations.postForEntity(EFFECTIVE_URL_KRB_OFF, YARN_CONF, H2oCredentials.class))
+    when(restOperations.postForEntity(EFFECTIVE_URL_KRB_OFF, params, H2oCredentials.class))
         .thenReturn(new ResponseEntity<>(H2O_CREDENTIALS, HttpStatus.OK));
 
     // act
     ResponseEntity<H2oCredentials> h2oInstanceEntity =
-        h2oRest.createH2oInstance("serviceInstanceId", "2", "512m", false, YARN_CONF);
+        h2oRest.createH2oInstance("serviceInstanceId", "2", "512m", false, params);
 
     // assert
     assertThat(h2oInstanceEntity.getStatusCode(), equalTo(HttpStatus.OK));
     assertThat(h2oInstanceEntity.getBody(), equalTo(H2O_CREDENTIALS));
-    verify(restOperations, times(1)).postForEntity(EFFECTIVE_URL_KRB_OFF, YARN_CONF,
+    verify(restOperations, times(1)).postForEntity(EFFECTIVE_URL_KRB_OFF, params,
         H2oCredentials.class);
   }
 

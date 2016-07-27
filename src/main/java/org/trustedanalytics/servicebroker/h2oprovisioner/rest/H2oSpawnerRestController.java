@@ -14,8 +14,13 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.rest;
 
-import java.util.Map;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oCredentials;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oProvisionerRequestData;
+import org.trustedanalytics.servicebroker.h2oprovisioner.service.H2oDeprovisioner;
+import org.trustedanalytics.servicebroker.h2oprovisioner.service.H2oSpawner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,12 +28,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oCredentials;
-import org.trustedanalytics.servicebroker.h2oprovisioner.service.H2oDeprovisioner;
-import org.trustedanalytics.servicebroker.h2oprovisioner.service.H2oSpawner;
+
+import java.util.Map;
 
 @RestController
 public class H2oSpawnerRestController {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(H2oSpawnerRestController.class);
 
   @Autowired
   private H2oSpawner h2oSpawner;
@@ -40,10 +46,13 @@ public class H2oSpawnerRestController {
   public H2oCredentials provisionH2o(@PathVariable String instanceId,
       @RequestParam String nodesCount, @RequestParam String memory,
       @RequestParam(required = false, defaultValue = "on") String kerberos,
-      @RequestBody Map<String, String> hadoopConf) throws H2oSpawnerException {
+      @RequestBody H2oProvisionerRequestData parameters) throws H2oSpawnerException {
+
+    //TODO: Make use of this parameter while doing task DPNG-6358
+    LOGGER.debug("User token passed: " + parameters.getUserToken());
 
     return h2oSpawner.provisionInstance(instanceId, memory, nodesCount, "on".equals(kerberos),
-        hadoopConf);
+        parameters.getYarnConfig());
   }
 
   @RequestMapping(value = "rest/instances/{instanceId}/delete", method = RequestMethod.POST)

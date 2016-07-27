@@ -14,6 +14,21 @@
 
 package org.trustedanalytics.servicebroker.h2oprovisioner.integration;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.util.MatcherAssertionErrors.assertThat;
+
+import org.trustedanalytics.servicebroker.h2oprovisioner.Application;
+import org.trustedanalytics.servicebroker.h2oprovisioner.config.ExternalConfiguration;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oCredentials;
+import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oProvisionerRequestData;
+import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oDriverExec;
+import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oUiFileParser;
+import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.KinitExec;
+
 import com.google.common.collect.ImmutableMap;
 import org.apache.hadoop.conf.Configuration;
 import org.junit.Test;
@@ -30,22 +45,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestOperations;
-import org.trustedanalytics.servicebroker.h2oprovisioner.Application;
-import org.trustedanalytics.servicebroker.h2oprovisioner.config.ExternalConfiguration;
-import org.trustedanalytics.servicebroker.h2oprovisioner.rest.api.H2oCredentials;
-import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oDriverExec;
-import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.H2oUiFileParser;
-import org.trustedanalytics.servicebroker.h2oprovisioner.service.externals.KinitExec;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.util.MatcherAssertionErrors.assertThat;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -78,13 +80,15 @@ public class H2oProvisionerIntegrationTest {
     final String INSTANCE_ID = "instanceId0";
     final String MEMORY = "256m";
     final String NODES_COUNT = "4";
-    final Map<String, String> YARN_CONF = ImmutableMap.of("key1", "value1", "key2", "value2");
+    final Map<String, String> yarnConfig = ImmutableMap.of("key1", "value1", "key2", "value2");
+    final H2oProvisionerRequestData params = new H2oProvisionerRequestData(yarnConfig, "userToken");
+
     when(h2oUiFileParser.getFlowUrl("h2o_ui_" + INSTANCE_ID)).thenReturn("qwerty.com:80");
 
     // act
     ResponseEntity<H2oCredentials> h2oCredentialsEntity =
         rest.postForEntity(baseUrl + "/rest/instances/" + INSTANCE_ID + "/create?nodesCount="
-            + NODES_COUNT + "&memory=" + MEMORY, YARN_CONF, H2oCredentials.class);
+            + NODES_COUNT + "&memory=" + MEMORY, params, H2oCredentials.class);
 
     // assert
     assertThat(h2oCredentialsEntity.getStatusCode(), equalTo(HttpStatus.OK));

@@ -36,12 +36,12 @@ public interface H2oProvisionerRestApi {
    * @param serviceInstanceId service instance unique id
    * @param nodesCount number of H2O nodes to be spawned
    * @param memory amount of memory for a single H2O node, e.g. 256m, 1g
-   * @param yarnConf YARN configuration map
+   * @param params both YARN configuration map and user token
    * @param kerberos true if kerberos authentication should be performed
    * @return credentials required to connect with H2O instance
    */
   ResponseEntity<H2oCredentials> createH2oInstance(String serviceInstanceId, String nodesCount,
-      String memory, boolean kerberos, Map<String, String> yarnConf);
+      String memory, boolean kerberos, H2oProvisionerRequestData params);
   
   /**
    * Destroys H2O server.

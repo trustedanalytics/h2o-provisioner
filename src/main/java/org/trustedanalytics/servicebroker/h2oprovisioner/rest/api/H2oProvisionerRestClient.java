@@ -42,10 +42,10 @@ public class H2oProvisionerRestClient implements H2oProvisionerRestApi {
 
   @Override
   public ResponseEntity<H2oCredentials> createH2oInstance(String serviceInstanceId,
-      String nodesCount, String memory, boolean kerberos, Map<String, String> yarnConf) {
+      String nodesCount, String memory, boolean kerberos, H2oProvisionerRequestData params) {
     String url = prepareUrl(serviceInstanceId, nodesCount, memory, kerberos);
     LOGGER.info("calling provisioner with url '" + url + "'");
-    return rest.postForEntity(url, yarnConf, H2oCredentials.class);
+    return rest.postForEntity(url, params, H2oCredentials.class);
   }
 
   @Override
