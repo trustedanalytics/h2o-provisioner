@@ -13,22 +13,21 @@
  */
 package org.trustedanalytics.servicebroker.h2oprovisioner.service;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.security.auth.login.LoginException;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.yarn.api.records.ApplicationId;
-import org.apache.hadoop.yarn.exceptions.ApplicationNotFoundException;
-import org.apache.hadoop.yarn.exceptions.YarnException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.DeprovisionerYarnClient;
 import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.DeprovisionerYarnClientProvider;
 import org.trustedanalytics.servicebroker.h2oprovisioner.cdhclients.KerberosClient;
 import org.trustedanalytics.servicebroker.h2oprovisioner.rest.H2oDeprovisioningException;
 import org.trustedanalytics.servicebroker.h2oprovisioner.rest.JobNotFoundException;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.hadoop.yarn.exceptions.YarnException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Map;
+import javax.security.auth.login.LoginException;
 
 public class H2oDeprovisioner {
 

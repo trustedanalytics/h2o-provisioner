@@ -48,7 +48,7 @@ public class H2oSpawnerRestController {
       @RequestParam(required = false, defaultValue = "on") String kerberos,
       @RequestBody H2oProvisionerRequestData parameters) throws H2oSpawnerException {
 
-    //TODO: Make use of this parameter while doing task DPNG-6358
+    //Make use of this parameter while doing task DPNG-6358
     LOGGER.debug("User token passed: " + parameters.getUserToken());
 
     return h2oSpawner.provisionInstance(instanceId, memory, nodesCount, "on".equals(kerberos),

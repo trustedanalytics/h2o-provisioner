@@ -17,7 +17,6 @@ package org.trustedanalytics.servicebroker.h2oprovisioner.rest.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.io.Serializable;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +26,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class H2oProvisionerRequestData implements Serializable {
+public class H2oProvisionerRequestData{
 
     private Map<String, String> yarnConfig;
     private String userToken;
