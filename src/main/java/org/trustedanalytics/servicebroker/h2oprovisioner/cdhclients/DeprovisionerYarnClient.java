@@ -84,10 +84,8 @@ public class DeprovisionerYarnClient {
       LOGGER.debug("Jobs found: " + message);
     }
 
-    List<ApplicationReport> foundApps = applicationsMetadata.stream()
+    return applicationsMetadata.stream()
         .filter(x -> x.getName().equals(name)).collect(Collectors.toList());
-
-    return foundApps;
   }
 
   public void killApplication(ApplicationId applicationId) throws YarnException, IOException {
