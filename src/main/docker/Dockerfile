@@ -9,10 +9,10 @@ VOLUME /tmp
 ADD /src/main/docker/krb5.conf /etc/krb5.conf
 COPY / /h2o-provisioner/
 
-RUN apt-get update --fix-missing \
-  && apt-get install -y npm nodejs python-pip r-base krb5-user maven \
-  && ln -s `which nodejs` /usr/bin/node \
-  && pip install tabulate
+RUN apt-get update --fix-missing
+RUN apt-get install -y npm nodejs python-pip r-base krb5-user maven
+RUN ln -s `which nodejs` /usr/bin/node
+RUN pip install tabulate
 
 RUN git clone https://github.com/trustedanalytics/h2o-3 /h2o-3 \
   && cd /h2o-3 \
