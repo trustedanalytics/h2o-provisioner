@@ -6,7 +6,10 @@ ENV HADOOP_CONF_DIR=/yarn-conf
 
 VOLUME /tmp
 
-RUN apt-get update \
+ADD /src/main/docker/krb5.conf /etc/krb5.conf
+COPY / /h2o-provisioner/
+
+RUN apt-get update --fix-missing \
   && apt-get install -y npm nodejs python-pip r-base krb5-user maven \
   && ln -s `which nodejs` /usr/bin/node \
   && pip install tabulate
@@ -15,12 +18,10 @@ RUN git clone https://github.com/trustedanalytics/h2o-3 /h2o-3 \
   && cd /h2o-3 \
   && export BUILD_HADOOP=1; ./gradlew build -x test
 
-ADD /src/main/docker/krb5.conf /etc/krb5.conf
-COPY / /h2o-provisioner/
-
 RUN mkdir /yarn-conf \
   && cat /etc/krb5.conf \
   && wget http://archive.apache.org/dist/hadoop/core/hadoop-2.6.0/hadoop-2.6.0.tar.gz \
+  && tar -xvf hadoop-2.6.0.tar.gz \
   && cp /h2o-3/h2o-hadoop/h2o-cdh5.4.2-assembly/build/libs/h2odriver.jar /h2odriver.jar
 
 RUN cd /h2o-provisioner \
